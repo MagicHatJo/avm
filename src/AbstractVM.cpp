@@ -51,14 +51,16 @@ void	AbstractVM::lexer(void)
 	while (_readToLex.isRunning() || !_readToLex.isEmpty())
 	{
 		_readToLex.pop(line);
-		std::istringstream	ss(line);
-		while (ss)
-		{
-			std::string token;
-			ss >> token;
-			_lexToParse.push(token);
-		}
-		//std::cout << "why does this work" << std::endl;
+
+		std::cout << line << std::endl;
+		_lexToParse.push(line);
+		// std::istringstream	ss(line);
+		// while (ss)
+		// {
+		// 	std::string token;
+		// 	ss >> token;
+		// 	_lexToParse.push(token);
+		// }
 	}
 	std::cout << "shutting down lexer\n";
 	_lexToParse.shutdown();
@@ -70,7 +72,7 @@ void	AbstractVM::parser(void)
 	while (_lexToParse.isRunning() || !_lexToParse.isEmpty())
 	{
 		_lexToParse.pop(token);
-		std::cout << "current token: " << token << std::endl;
+		std::cout << "current token: |" << token << "|" << std::endl;
 	}
 	std::cout << "shutting down parser\n";
 }

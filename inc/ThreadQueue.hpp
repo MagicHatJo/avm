@@ -2,7 +2,7 @@
 
 #include <mutex>
 #include <queue>
-
+#include <iostream>
 template<typename T>
 class ThreadQueue
 {
@@ -27,11 +27,11 @@ public:
 	void	push(T const & val)
 	{
 		std::unique_lock<std::mutex> lock(_queue_mutex);
-		//bool to_notify = _queue.empty();
+		bool to_notify = _queue.empty();
 		_queue.push(val);
 		lock.unlock();
-		//if (to_notify)
-		this->_cond_var.notify_one();
+		if (to_notify)
+			this->_cond_var.notify_one();
 	}
 
 	void	pop(T & val)
@@ -45,19 +45,7 @@ public:
 		_queue.pop();
 	}
 
-	bool	isRunning(void)
-	{
-		//std::unique_lock<std::mutex> lock(_queue_mutex);
-		return (_isRunning);
-	}
-	bool	isEmpty(void)
-	{
-		//std::unique_lock<std::mutex> lock(_queue_mutex);
-		return (_queue.empty());
-	}
-	void	shutdown(void)
-	{
-		//std::unique_lock<std::mutex> lock(_queue_mutex);
-		_isRunning = false;
-	}
+	bool	isRunning(void)	{ return (_isRunning); }
+	bool	isEmpty(void)	{ return (_queue.empty()); }
+	void	shutdown(void)	{ _isRunning = false; }
 };
