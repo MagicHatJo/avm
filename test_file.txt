@@ -1,4 +1,6 @@
-hello there
-this is a line
-and another line
-whoop	whoop
+add	int8(42)
+add int16(425345)
+add int32(4)
+add ;float(42.543)
+add	double(42.453) ; comment
+;comment

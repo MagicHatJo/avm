@@ -47,5 +47,9 @@ public:
 
 	bool	isRunning(void)	{ return (_isRunning); }
 	bool	isEmpty(void)	{ return (_queue.empty()); }
-	void	shutdown(void)	{ _isRunning = false; }
+	void	shutdown(void)
+	{
+		_isRunning = false;
+		this->_cond_var.notify_one();
+	}
 };

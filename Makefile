@@ -2,6 +2,7 @@ NAME = avm
 
 SRC =	main \
 		AbstractVM \
+		Token \
 
 INC = -I inc \
 
