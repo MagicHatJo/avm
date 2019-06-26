@@ -3,6 +3,7 @@
 #include <mutex>
 #include <queue>
 #include <iostream>
+
 template<typename T>
 class ThreadQueue
 {
@@ -18,7 +19,7 @@ public:
 	ThreadQueue(const ThreadQueue & val) { *this = val; }
 	~ThreadQueue(void) { }
 
-	ThreadQueue operator = (const ThreadQueue & val)
+	ThreadQueue& operator = (const ThreadQueue & val)
 	{
 		(void)val;
 		return (*this);

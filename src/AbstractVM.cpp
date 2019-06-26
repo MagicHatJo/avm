@@ -39,7 +39,6 @@ void	AbstractVM::reader(void)
 		while (std::getline(ifs, line))
 			_readToLex.push(line);
 	}
-	std::cout << "shutting down reader\n";
 	_readToLex.shutdown();
 }
 
@@ -52,15 +51,12 @@ void	AbstractVM::lexer(void)
 	{
 		_readToLex.pop(line);
 		std::istringstream	ss(line);
-
-		while (ss >> word) //if there is a ; in the word, push until that, and then push that
+		while (ss >> word)
 		{
 			_lexToParse.push(word);
 		}
 		_lexToParse.push("");
 	}
-
-	std::cout << "shutting down lexer\n";
 	_lexToParse.shutdown();
 }
 
@@ -69,7 +65,10 @@ void	AbstractVM::parser(void)
 	std::string	word;
 	Token		token;
 	e_state		state = e_cmd;
+	int			syntaxError = 0;
+	int			lineCount = 1;
 
+	token.resetToken();
 	while (_lexToParse.isRunning() || !_lexToParse.isEmpty())
 	{
 		_lexToParse.pop(word);
@@ -79,39 +78,77 @@ void	AbstractVM::parser(void)
 			state = e_comment;
 		switch (state)
 		{
-			case e_cmd:		token.setCmd(word);
-							std::cout << "Cmd: " << token.getCmd() << std::endl;
+			case e_cmd:		if (!(token.setCmd(word)))
+								syntaxError++;
 							state = e_type;
 							break;
-			case e_type:	if (token.setValue(word))
-								std::cout << "value set successfully\n";
-							else
-								std::cout << "set value failed\n";
-							std::cout << "Type: " << token.getType() << std::endl;
-							std::cout << "Value: " << token.getValue() << std::endl;
+			case e_type:	if (!(token.setValue(word)))
+								syntaxError++;
 							state = e_limbo;
 							break;
-			case e_limbo:	std::cout << "Syntax error at end of line\n";
+			case e_limbo:	syntaxError++;
 							break;
-			case e_newline:	std::cout << "Checking token\n";
-							//check token validity
-							//push to factory if valid
+			case e_newline:	if (token.isValid() && !syntaxError)
+							{
+								_parseToFact.push(token);
+							}
+							else
+								std::cout << "Syntax error on line: " << lineCount << std::endl;
+							token.resetToken();
 							state = e_cmd;
+							syntaxError = 0;
+							lineCount++;
 							break;
 			case e_comment:	std::cout << "Comment: " << word << std::endl;
 							break;
 			default:		std::cout << "syntax error\n";
 		};
 	}
-	std::cout << "shutting down parser\n";
+	_parseToFact.shutdown();
 }
 
 //factory
-//dont start until parser is complete, to catch syntax errors?
-//if it is an operand, push onto stack
-//if it is an action, send action to stack thread to operate
 void	AbstractVM::factory(void)
 {
-	
+	Token	token;
+	//wait for priority until all syntax handling is complete??
+	while (_parseToFact.isRunning() || !_parseToFact.isEmpty())
+	{
+		_parseToFact.pop(token);
+		//if push or assert, create and add operand to _oprQueue
+		//send command to stack
+		_factToExe.push(token.getCmd());
+	}
+	_factToExe.shutdown();
+}
+
+//have queue of operands as well instead to avoid needing priority passing
+//stack takes instructions and operates on the existing stack
+//stops printing on first execution error
+void	AbstractVM::execute(void)
+{
+	//std::vector<IOperand*>	theStack;
+	e_command	order;
+
+	while (_factToExe.isRunning() || !_factToExe.isEmpty())
+	{
+		_factToExe.pop(order);
+		switch (order)
+		{
+			case (e_push)	:
+			case (e_pop)	:
+			case (e_dump)	:
+			case (e_assert)	:
+			case (e_add)	:
+			case (e_sub)	:
+			case (e_mul)	:
+			case (e_div)	:
+			case (e_mod)	:
+			case (e_print)	:
+			case (e_exit)	:
+			default			: break ;
+		};
+	}
+	//check to make sure exit was called
 }
 #pragma endregion

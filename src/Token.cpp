@@ -4,13 +4,17 @@
 Token::Token(void) : _cmd(e_error), _type(e_null), _value("") { }
 Token::Token(const Token& cpy)
 {
-	//copy
+	this->_cmd = cpy.getCmd();
+	this->_type = cpy.getType();
+	this->_value = cpy.getValue();
 }
 Token::~Token(void) { }
 
 Token& Token::operator = (const Token& old)
 {
-	(void)old;
+	this->_cmd = old.getCmd();
+	this->_type = old.getType();
+	this->_value = old.getValue();
 	return (*this);
 }
 #pragma endregion
@@ -23,7 +27,6 @@ bool	Token::setCmd(std::string word)
 		return (false);
 	return (true);
 }
-
 bool	Token::setValue(std::string word)
 {
 	static const std::regex	re{"^(int8\\(|int16\\(|int32\\(|float\\(|double\\()+((-?\\d+\\.\\d+)|(-?\\d+))+\\)$"};
@@ -56,22 +59,15 @@ void	Token::resetToken(void)
 
 bool	Token::isValid(void)
 {
-<<<<<<< HEAD
-	//if cmd is error, false
-	//if cmd is push or assert, there needs to be a valid type
-	//else, needs to be e_null, and "" value
-=======
 	if (this->_cmd == e_error)
 		return (false);
 	if (this->_cmd == e_push || this->_cmd == e_assert)
 	{
-		if (this->_type != e_null && this->_value != "")// &&
-			//countMatchInRegex(this->_value, "-?[0-9]+([.][0-9]+)?") == 1) // also make sure value is a digit
-			return (true);
+		if (this->_type == e_null || this->_value == "")
+			return (false);
 	}
-	else if (this->_type == e_null && this->_value == "")
-		return (true);
-	return (false);
->>>>>>> d47e8a9a9ca1c6a04c7b876f0195b386bc431138
+	else if (this->_type != e_null || this->_value != "")
+		return (false);
+	return (true);
 }
 #pragma endregion

@@ -1,6 +1,4 @@
-add	int8(42)
-add int16(42534..5)
-add int32(4hello)
-add ;float(42c543)
-add	double(42.453) ; comment
-;comment
+assert int8(5)
+add
+dump
+push double(45.45)

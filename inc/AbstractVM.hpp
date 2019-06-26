@@ -34,12 +34,12 @@ class AbstractVM
 private:
 	std::string				_fileName;
 
-	bool					_readerLoaded;
-	std::mutex				_readerMutex;
-	std::condition_variable	_readerCond;
-
 	ThreadQueue<std::string>	_readToLex;
 	ThreadQueue<std::string>	_lexToParse;
+	ThreadQueue<Token>			_parseToFact;
+	ThreadQueue<e_command>		_factToExe;
+
+	//ThreadQueue<IOperand*>		_oprQueue;
 
 public:
 	/* CANONICAL */
@@ -54,4 +54,5 @@ public:
 	void	lexer(void);
 	void	parser(void);
 	void	factory(void);
+	void	execute(void);
 };
