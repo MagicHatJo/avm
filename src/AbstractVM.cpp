@@ -83,7 +83,10 @@ void	AbstractVM::parser(void)
 							std::cout << "Cmd: " << token.getCmd() << std::endl;
 							state = e_type;
 							break;
-			case e_type:	token.setValue(word);
+			case e_type:	if (token.setValue(word))
+								std::cout << "value set successfully\n";
+							else
+								std::cout << "set value failed\n";
 							std::cout << "Type: " << token.getType() << std::endl;
 							std::cout << "Value: " << token.getValue() << std::endl;
 							state = e_limbo;

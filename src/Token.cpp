@@ -41,8 +41,8 @@ bool	Token::setValue(std::string word)
 #pragma endregion
 
 #pragma region GET
-e_command	Token::getCmd(void)		const { return (_cmd); }
-e_operand	Token::getType(void)	const { return (_type); }
+e_command	Token::getCmd(void)		const { return (_cmd);   }
+e_operand	Token::getType(void)	const { return (_type);  }
 std::string	Token::getValue(void)	const { return (_value); }
 #pragma endregion
 
@@ -56,8 +56,22 @@ void	Token::resetToken(void)
 
 bool	Token::isValid(void)
 {
+<<<<<<< HEAD
 	//if cmd is error, false
 	//if cmd is push or assert, there needs to be a valid type
 	//else, needs to be e_null, and "" value
+=======
+	if (this->_cmd == e_error)
+		return (false);
+	if (this->_cmd == e_push || this->_cmd == e_assert)
+	{
+		if (this->_type != e_null && this->_value != "")// &&
+			//countMatchInRegex(this->_value, "-?[0-9]+([.][0-9]+)?") == 1) // also make sure value is a digit
+			return (true);
+	}
+	else if (this->_type == e_null && this->_value == "")
+		return (true);
+	return (false);
+>>>>>>> d47e8a9a9ca1c6a04c7b876f0195b386bc431138
 }
 #pragma endregion

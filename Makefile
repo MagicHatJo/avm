@@ -3,6 +3,7 @@ NAME = avm
 SRC =	main \
 		AbstractVM \
 		Token \
+		util \
 
 INC = -I inc \
 
@@ -28,21 +29,21 @@ $(OBJ_DIR):
 -include $(DEP)
 
 $(OBJ_DIR)/%.o: %.cpp | $(OBJ_DIR)
-	@printf "\e[32mCompiling:\e[0m %s\n" $<
+	@printf "\033[32mCompiling:\033[0m %s\n" $<
 	@$(CC) $(CFLAGS) -MMD -c $< -o $@
 
 $(NAME): $(OBJ)
-	@printf "\e[32mCompiling:\e[0m %s\n" $(NAME)
-	@$(CC) $^ -o $(BIN_DIR)/$@ $(LDFLAGS)
+	@printf "\033[32mCompiling:\033[0m %s\n" $(NAME)
+	@$(CC) $^ $(LDFLAGS) -o $(BIN_DIR)/$@
 
 clean:
-	@printf "\e[33mDeleting : Objects\e[0m\n"
+	@printf "\033[33mDeleting : Objects\033[0m\n"
 	@rm -f $(OBJ)
 
 fclean: clean
-	@printf "\e[33mDeleting : %s\e[0m\n" $(NAME)
+	@printf "\033[33mDeleting : %s\033[0m\n" $(NAME)
 	@rm -f $(NAME)
-	@printf "\e[33mDeleting : Object Directory\e[0m\n"
+	@printf "\033[33mDeleting : Object Directory\033[0m\n"
 	@rm -rf $(OBJ_DIR)
 
 re: fclean all
