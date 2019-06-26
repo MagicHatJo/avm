@@ -3,6 +3,9 @@
 
 #include "AbstractVM.hpp"
 
+//tmp?
+#include <cstdlib>
+
 int	main(int ac, char **av)
 {
 	if (ac > 2)

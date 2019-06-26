@@ -31,6 +31,9 @@ enum	e_operand
 	e_double
 };
 
+//UTIL
+int countMatchInRegex(std::string s, std::string re);
+
 typedef struct	s_cmdMap : public std::map<std::string, e_command>
 {
 	s_cmdMap()
