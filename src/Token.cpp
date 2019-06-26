@@ -56,6 +56,7 @@ void	Token::resetToken(void)
 
 bool	Token::isValid(void)
 {
+	//if cmd is error, false
 	//if cmd is push or assert, there needs to be a valid type
 	//else, needs to be e_null, and "" value
 }
