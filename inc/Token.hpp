@@ -4,6 +4,8 @@
 #include <string>
 #include <regex>
 
+#include "eOperandType.hpp"
+
 #pragma region ENUMS
 enum	e_command
 {
@@ -19,16 +21,6 @@ enum	e_command
 	e_mod,
 	e_print,
 	e_exit
-};
-
-enum	e_operand
-{
-	e_null,
-	e_int8,
-	e_int16,
-	e_int32,
-	e_float,
-	e_double
 };
 
 //UTIL
@@ -52,7 +44,7 @@ typedef struct	s_cmdMap : public std::map<std::string, e_command>
 	};
 }				t_cmdMap;
 
-typedef struct	s_oprMap : public std::map<std::string, e_operand>
+typedef struct	s_oprMap : public std::map<std::string, eOperandType>
 {
 	s_oprMap()
 	{
@@ -69,7 +61,7 @@ class Token
 {
 private:
 	e_command	_cmd;
-	e_operand	_type;
+	eOperandType	_type;
 	std::string	_value;
 
 public:
@@ -85,7 +77,7 @@ public:
 
 	/* GET */
 	e_command	getCmd(void)	const;
-	e_operand	getType(void)	const;
+	eOperandType	getType(void)	const;
 	std::string	getValue(void)	const;
 
 	/* UTIL */

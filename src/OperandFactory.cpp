@@ -35,8 +35,8 @@ IOperand const * OperandFactory::createDouble(std::string const & val) const
 	return (new Operand<double>(static_cast<double>(std::stod(val))));
 }
 
-IOperand const * OperandFactory::createOperand(eOperandType, std::string const & str) const
+IOperand const * OperandFactory::createOperand(eOperandType type, std::string const & str) const
 {
 	t_factMap	map;
-	return (map[eOperandType](str));
+	return (map[type](str));
 }

@@ -13,6 +13,9 @@
 #include "ThreadQueue.hpp"
 #include "Token.hpp"
 
+#include "IOperand.hpp"
+#include "OperandFactory.hpp"
+
 //temp inc
 #include <iostream>
 #pragma endregion
@@ -39,7 +42,7 @@ private:
 	ThreadQueue<Token>			_parseToFact;
 	ThreadQueue<e_command>		_factToExe;
 
-	//ThreadQueue<IOperand*>		_oprQueue;
+	ThreadQueue<IOperand*>		_oprQueue;
 
 public:
 	/* CANONICAL */

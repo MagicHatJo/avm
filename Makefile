@@ -38,7 +38,7 @@ $(NAME): $(OBJ)
 
 clean:
 	@printf "\033[33mDeleting : Objects\033[0m\n"
-	@rm -f $(OBJ)
+	@rm -f $(OBJ) $(DEP)
 
 fclean: clean
 	@printf "\033[33mDeleting : %s\033[0m\n" $(NAME)

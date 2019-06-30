@@ -1,17 +1,23 @@
 #pragma once
 
-#incldue <map>
+#include <map>
 #include <string>
-#include "IOperand.hpp"
 
-typedef struct	s_factMap : public std::map<std::string, e_operand>
+#include "eOperandType.hpp"
+
+#include "IOperand.hpp"
+#include "Operand.hpp"
+
+typedef IOperand const * (*oprFunc)(std::string const &);
+
+typedef struct	s_factMap : public std::map<eOperandType, oprFunc>
 {
 	s_factMap()
 	{
-		this->operator[](e_int8) = OperandFactory::&createInt8;
-		this->operator[](e_int16) = OperandFactory::&createInt16;
-		this->operator[](e_int32) = OperandFactory::&createInt32;
-		this->operator[](e_float) = OperandFactory::&createFloat;
+		this->operator[](e_int8)   = OperandFactory::&createInt8;
+		this->operator[](e_int16)  = OperandFactory::&createInt16;
+		this->operator[](e_int32)  = OperandFactory::&createInt32;
+		this->operator[](e_float)  = OperandFactory::&createFloat;
 		this->operator[](e_double) = OperandFactory::&createDouble;
 	};
 }				t_factMap;

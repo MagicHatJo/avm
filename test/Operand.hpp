@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "eOperandType.hpp"
+
 template<typename T>
 class Operand : public IOperand
 {
@@ -10,7 +12,7 @@ private:
 	T				_value;
 
 public:
-	Operand(eOperandType type, T val) : _type(type), _value(val) { }
+	Operand<T>(eOperandType type) : _type(type), _value(val) { }
 	Operand(const Operand & val) { }
 	~Operand(void) { }
 

@@ -110,13 +110,19 @@ void	AbstractVM::parser(void)
 //factory
 void	AbstractVM::factory(void)
 {
-	Token	token;
+	OperandFactory		factory;
+	Token				token;
+	const IOperand*		operand;
+
 	//wait for priority until all syntax handling is complete??
 	while (_parseToFact.isRunning() || !_parseToFact.isEmpty())
 	{
 		_parseToFact.pop(token);
-		//if push or assert, create and add operand to _oprQueue
-		//send command to stack
+		if (token.getCmd() == e_push || token.getCmd() == e_assert)
+		{
+			operand = factory.createOperand(token.getType(), token.getValue());
+			//add to _oprQueue
+		}
 		_factToExe.push(token.getCmd());
 	}
 	_factToExe.shutdown();
