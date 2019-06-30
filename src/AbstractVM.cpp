@@ -102,7 +102,7 @@ void	AbstractVM::parser(void)
 			case e_comment:	std::cout << "Comment: " << word << std::endl;
 							break;
 			default:		std::cout << "syntax error\n";
-		};
+		}
 	}
 	_parseToFact.shutdown();
 }
@@ -153,7 +153,7 @@ void	AbstractVM::execute(void)
 			case (e_print)	:
 			case (e_exit)	:
 			default			: break ;
-		};
+		}
 	}
 	//check to make sure exit was called
 }
