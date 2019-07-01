@@ -13,6 +13,21 @@ private:
 	T				_value;
 	std::string		_str;
 
+	/* DO OP */
+	//doAdd
+	template<typename A>
+	Operand<A>&	doAdd(eOperandType type, A first, A second)
+	{
+		this->_type = type;
+		this->_value = first + second; //error check over/underflow
+		this->_str = std::to_str(this->_value);
+		return (*this); 
+	}
+	//doSub
+	//doMul
+	//doDiv
+	//doMod
+
 public:
 	Operand(void) : _type(e_null), _value(0), _str("") { }
 	Operand<T>(eOperandType type, T val) : _type(type), _value(val), _str(std::to_string(val)) { }
@@ -41,7 +56,7 @@ public:
 
 		switch (curType)//maybe cast dynamic instead of switch case
 		{
-			case (e_int8)	:	
+			case (e_int8)	:	this->doAdd(curType, this->_value, curNum);//return doAdd with reinterpret cast to ioperand*
 			case (e_int16)	:
 			case (e_int32)	:
 			case (e_float)	:
