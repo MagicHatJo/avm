@@ -3,7 +3,10 @@ NAME = avm
 SRC =	main \
 		AbstractVM \
 		Token \
+		Operand \
+		OperandFactory \
 		util \
+		exe \
 
 INC = -I inc \
 

@@ -112,7 +112,6 @@ void	AbstractVM::factory(void)
 {
 	OperandFactory		factory;
 	Token				token;
-	const IOperand*		operand;
 
 	//wait for priority until all syntax handling is complete??
 	while (_parseToFact.isRunning() || !_parseToFact.isEmpty())
@@ -120,8 +119,7 @@ void	AbstractVM::factory(void)
 		_parseToFact.pop(token);
 		if (token.getCmd() == e_push || token.getCmd() == e_assert)
 		{
-			operand = factory.createOperand(token.getType(), token.getValue());
-			//add to _oprQueue
+			_oprQueue.push(factory.createOperand(token.getType(), token.getValue()));
 		}
 		_factToExe.push(token.getCmd());
 	}
@@ -133,28 +131,21 @@ void	AbstractVM::factory(void)
 //stops printing on first execution error
 void	AbstractVM::execute(void)
 {
-	//std::vector<IOperand*>	theStack;
 	e_command	order;
 
 	while (_factToExe.isRunning() || !_factToExe.isEmpty())
 	{
 		_factToExe.pop(order);
-		switch (order)
-		{
-			case (e_push)	:
-			case (e_pop)	:
-			case (e_dump)	:
-			case (e_assert)	:
-			case (e_add)	:
-			case (e_sub)	:
-			case (e_mul)	:
-			case (e_div)	:
-			case (e_mod)	:
-			case (e_print)	:
-			case (e_exit)	:
-			default			: break ;
-		}
+		_exe_map[order]();
 	}
 	//check to make sure exit was called
+}
+#pragma endregion
+
+#pragma region OVL
+std::ostream&	operator << (std::ostream& output, const Operand& rhs)
+{
+	output << rhs.getValue();
+	return (output);
 }
 #pragma endregion
