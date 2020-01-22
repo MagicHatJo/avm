@@ -1,6 +1,5 @@
 #include "AbstractVM.hpp"
 
-#pragma region SETUP
 AbstractVM::AbstractVM(void) : _fileName(nullptr) { }
 AbstractVM::AbstractVM(std::string s) : _fileName(s) { }
 
@@ -16,9 +15,7 @@ AbstractVM& AbstractVM::operator = (const AbstractVM& old)
 	(void)old;
 	return (*this);
 }
-#pragma endregion
 
-#pragma region AVM
 void	AbstractVM::reader(void)
 {
 	std::string		line;
@@ -140,12 +137,9 @@ void	AbstractVM::execute(void)
 	}
 	//check to make sure exit was called
 }
-#pragma endregion
 
-#pragma region OVL
 std::ostream&	operator << (std::ostream& output, const Operand& rhs)
 {
 	output << rhs.getValue();
 	return (output);
 }
-#pragma endregion

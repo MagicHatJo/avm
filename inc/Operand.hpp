@@ -33,4 +33,4 @@ public:
 	std::string const& toString(void) const;
 };
 
-std::ostream&	operator << (std::ostream& output, const Operand& rhs);
+std::ostream&	operator << (std::ostream& output, const IOperand& rhs);

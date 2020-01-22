@@ -6,7 +6,6 @@
 
 #include "eOperandType.hpp"
 
-#pragma region ENUMS
 enum	e_command
 {
 	e_error,
@@ -55,7 +54,6 @@ typedef struct	s_oprMap : public std::map<std::string, eOperandType>
 		this->operator[]("double(")   = e_double;
 	};
 }				t_oprMap;
-#pragma endregion
 
 class Token
 {

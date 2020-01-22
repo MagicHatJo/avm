@@ -1,6 +1,5 @@
 #include "Token.hpp"
 
-#pragma region SETUP
 Token::Token(void) : _cmd(e_error), _type(e_null), _value("") { }
 Token::Token(const Token& cpy)
 {
@@ -17,9 +16,7 @@ Token& Token::operator = (const Token& old)
 	this->_value = old.getValue();
 	return (*this);
 }
-#pragma endregion
 
-#pragma region SET
 bool	Token::setCmd(std::string word)
 {
 	t_cmdMap	map;
@@ -41,15 +38,11 @@ bool	Token::setValue(std::string word)
 	}
 	return (false);
 }
-#pragma endregion
 
-#pragma region GET
 e_command	Token::getCmd(void)		const { return (_cmd);   }
 e_operand	Token::getType(void)	const { return (_type);  }
 std::string	Token::getValue(void)	const { return (_value); }
-#pragma endregion
 
-#pragma region UTIL
 void	Token::resetToken(void)
 {
 	this->_cmd = e_error;
@@ -70,4 +63,3 @@ bool	Token::isValid(void)
 		return (false);
 	return (true);
 }
-#pragma endregion

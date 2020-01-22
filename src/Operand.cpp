@@ -1,6 +1,5 @@
 #include "Operand.hpp"
 
-#pragma region SETUP
 template<class T> Operand<T>::Operand(void) { }
 
 template<class T> Operand<T>::Operand(T val, eOperandType type) : _val(val), _type(type) { }
@@ -12,9 +11,7 @@ template<class T> Operand<T>::Operand(const Operand& cpy)
 }
 
 template<class T> Operand<T>::~Operand() { }
-#pragma endregion
 
-#pragma region OVERLOAD
 template<class T> const IOperand& Operand<T>::operator = (const Operand& cpy)
 {
 	_val = cpy.getVal(); 
@@ -104,22 +101,15 @@ template<class T> bool Operand<T>::operator ==(const IOperand& rhs) const
 {
 	if (this->_val == rhs.getVal())
 }
-#pragma endregion
 
-#pragma region GET
 template<class T> T Operand<T>::getVal(void)				const { return (_val); }
 template<class T> int Operand<T>::getPrecision(void)		const { return (_type); }
 template<class T> eOperandType Operand<T>::getType(void)	const { return (_type); }
-#pragma endregion
 
-#pragma region STRING
 template<class T> std::string const& Operand<T>::toString(void)	const { return std::to_string(_val); }
-#pragma endregion
 
-#pragma region HARD
 template class Operand<int8_t>;
 template class Operand<int16_t>;
 template class Operand<int32_t>;
 template class Operand<float>;
 template class Operand<double>;
-#pragma endregion

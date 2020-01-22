@@ -1,6 +1,5 @@
 #pragma once
 
-#pragma region INC
 #include <algorithm>
 #include <condition_variable>
 #include <mutex>
@@ -20,9 +19,7 @@
 
 //temp inc
 #include <iostream>
-#pragma endregion
 
-#pragma region ENUMS
 enum	e_state
 {
 	e_rror,
@@ -32,10 +29,12 @@ enum	e_state
 	e_newline,
 	e_comment
 };
-#pragma endregion
 
 /* LOOKUP TABLE */
-typedef struct	s_exeMap : public std::map<e_command>
+
+typedef void (*exeFunc)();
+
+typedef struct	s_exeMap : public std::map<e_command, exeFunc>
 {
 	s_exeMap()
 	{
