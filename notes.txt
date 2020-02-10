@@ -1,3 +1,6 @@
  g++ src/* -I inc -pthread
 
- 
+
+
+error handling
+unit tester

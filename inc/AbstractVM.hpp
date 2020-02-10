@@ -11,6 +11,8 @@
 
 #include <string>
 
+#include <vector>
+
 #include "ThreadQueue.hpp"
 #include "Token.hpp"
 
@@ -30,28 +32,6 @@ enum	e_state
 	e_comment
 };
 
-/* LOOKUP TABLE */
-
-typedef void (*exeFunc)();
-
-typedef struct	s_exeMap : public std::map<e_command, exeFunc>
-{
-	s_exeMap()
-	{
-		this->operator[](e_error)   = AbstractVM::&error_exe;
-		this->operator[](e_push)    = AbstractVM::&push_exe;
-		this->operator[](e_pop)     = AbstractVM::&pop_exe;
-		this->operator[](e_dump)    = AbstractVM::&dump_exe;
-		this->operator[](e_assert)  = AbstractVM::&assert_exe;
-		this->operator[](e_add)     = AbstractVM::&add_exe;
-		this->operator[](e_sub)     = AbstractVM::&sub_exe;
-		this->operator[](e_mul)     = AbstractVM::&mul_exe;
-		this->operator[](e_div)     = AbstractVM::&div_exe;
-		this->operator[](e_mod)     = AbstractVM::&mod_exe;
-		this->operator[](e_print)   = AbstractVM::&print_exe;
-		this->operator[](e_exit)    = AbstractVM::&exit_exe;
-	};
-}				t_exeMap;
 
 class AbstractVM
 {
@@ -63,10 +43,8 @@ private:
 	ThreadQueue<Token>			_parseToFact;
 	ThreadQueue<e_command>		_factToExe;
 
-	ThreadQueue<IOperand*>		_oprQueue;
-	std::deque<IOperand*>		_theStack;
-
-	t_exeMap	_exe_map;
+	ThreadQueue<IOperand*>			_oprQueue;
+	std::vector<const IOperand*>	_theStack;
 
 	/* EXECUTE */
 	void	error_exe(void);
@@ -81,6 +59,23 @@ private:
 	void	mod_exe(void);
 	void	print_exe(void);
 	void	exit_exe(void);
+
+	typedef void (AbstractVM::*exeFunc)(void);
+
+	exeFunc	_exe_map[12] = {
+		&AbstractVM::error_exe,
+		&AbstractVM::push_exe,
+		&AbstractVM::pop_exe,
+		&AbstractVM::dump_exe,
+		&AbstractVM::assert_exe,
+		&AbstractVM::add_exe,
+		&AbstractVM::sub_exe,
+		&AbstractVM::mul_exe,
+		&AbstractVM::div_exe,
+		&AbstractVM::mod_exe,
+		&AbstractVM::print_exe,
+		&AbstractVM::exit_exe
+	};
 
 public:
 	/* CANONICAL */

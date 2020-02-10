@@ -2,20 +2,23 @@
 
 template<class T> Operand<T>::Operand(void) { }
 
-template<class T> Operand<T>::Operand(T val, eOperandType type) : _val(val), _type(type) { }
+template<class T> Operand<T>::Operand(T val, eOperandType type) : _val(val), _type(type)
+{
+	_str = std::to_string(_val);
+}
 
 template<class T> Operand<T>::Operand(const Operand& cpy)
 {
-	_val = cpy.getVal();
-	_type = cpy.getType();
+	*this = cpy;
 }
 
 template<class T> Operand<T>::~Operand() { }
 
-template<class T> const IOperand& Operand<T>::operator = (const Operand& cpy)
+template<class T> Operand<T>& Operand<T>::operator = (const Operand<T>& cpy)
 {
-	_val = cpy.getVal(); 
-	_type = cpy.getType();
+	this->_val = cpy.getVal(); 
+	this->_type = cpy.getType();
+	this->_str = cpy.toString();
 	return (*this);
 }
 
@@ -24,26 +27,36 @@ template<class T> const IOperand* Operand<T>::operator + (const IOperand& rhs) c
 	if(this->getPrecision() < rhs.getPrecision())
 		return (rhs + *this);
 	
-	if (this->_val > 0 && rhs.getVal() > 0 && this->_val + rhs.getVal() < rhs.getVal()
+	T	rhs_val = static_cast<T>(std::stod(rhs.toString()));
+
+	if (this->_val > 0 && rhs_val > 0 && this->_val + rhs_val < rhs_val)
 		throw std::overflow_error("Addition Overflow");
-	if (this->_val < 0 && rhs.getVal() < 0 && this->_val + rhs.getVal() > rhs.getVal())
+	if (this->_val < 0 && rhs_val < 0 && this->_val + rhs_val > rhs_val)
 		throw std::underflow_error("Addition Underflow");
 
-	return new Operand<T>(this->_val + (static_cast<T>(rhs.getVal())), this->getType());
+	return new Operand<T>(this->_val + rhs_val, this->getType());
 }
 
 template<class T> const IOperand* Operand<T>::operator - (const IOperand& rhs) const
 {
-	//check for overflow or underflow
+	double	rhs_val = std::stod(rhs.toString());
+
+	if (rhs_val < 0 && this->_val > std::numeric_limits<T>::max() + rhs_val)
+		throw std::overflow_error("Subtraction Overflow");
+	if (rhs_val >= 0 && this->_val < std::numeric_limits<T>::min() + rhs_val)
+		throw std::underflow_error("Subtraction Underflow");
+
 	if (this->getPrecision() < rhs.getPrecision())
+	{
 		switch (rhs.getPrecision())
 		{
-			case e_int16: return new Operand<int16_t>(static_cast<int16_t>(this->_val) - rhs.getVal()), rhs->getType());
-			case e_int16: return new Operand<int32_t>(static_cast<int32_t>(this->_val) - rhs.getVal()), rhs->getType());
-			case e_int16: return new Operand<float>(static_cast<float>(this->_val) - rhs.getVal()), rhs->getType());
-			case e_int16: return new Operand<double>(static_cast<double>(this->_val) - rhs.getVal()), rhs->getType());
+			case e_int16 : return new Operand<int16_t>(static_cast<int16_t>(this->_val) - rhs_val, rhs.getType());
+			case e_int32 : return new Operand<int32_t>(static_cast<int32_t>(this->_val) - rhs_val, rhs.getType());
+			case e_float : return new Operand<float>(static_cast<float>(this->_val) - rhs_val, rhs.getType());
+			case e_double: return new Operand<double>(static_cast<double>(this->_val) - rhs_val, rhs.getType());
 		}
-	return new Operand<T>(this->_val - (static_cast<T>(rhs.getVal())), this->getType());
+	}
+	return new Operand<T>(this->_val - rhs_val, this->getType());
 }
 
 template<class T> const IOperand* Operand<T>::operator * (const IOperand& rhs) const
@@ -51,62 +64,77 @@ template<class T> const IOperand* Operand<T>::operator * (const IOperand& rhs) c
 	if (this->getPrecision() < rhs.getPrecision())
 		return (rhs * *this);
 
-	if (abs(this->_val) > std::numeric_limits<T>::max() / abs(rhs.getVal()))
-	{
-		if (this->_val > 0 && rhs.getVal() > 0 ||
-			this->_val < 0 && rhs.getVal() < 0)
-			throw std::overflow_error("Multiplication Overflow");
-		if (this->val > 0 ^ rhs.getVal() > 0)
-			throw std::underflow_error("Multiplication Underflow"); 
-	}
+	T	rhs_val = static_cast<T>(std::stod(rhs.toString()));
 
-	return new Operand<T>(this->_val * static_cast<T>(rhs.getVal()), this->getType());
+	if ((rhs_val >= 0 && this->_val >= 0 && this->_val > std::numeric_limits<T>::max() / rhs_val)
+		|| (rhs_val < 0 && this->_val < 0 && this->_val < std::numeric_limits<T>::max() / rhs_val))
+		throw std::overflow_error("Multiplication Overflow");
+	if ((rhs_val >= 0 && this->_val < 0 && this->_val < std::numeric_limits<T>::min() / rhs_val)
+        || (rhs_val < 0 && this->_val >= 0 && this->_val > std::numeric_limits<T>::min() / rhs_val))
+		throw std::underflow_error("Multiplication Underflow");
+
+	return new Operand<T>(this->_val * rhs_val, this->getType());
 }
 
 template<class T> const IOperand* Operand<T>::operator / (const IOperand& rhs) const
 {
-	if (rhs.getVal() == 0)
-		throw std::invalid_argument("Dividing by 0");
+	double	rhs_val = std::stod(rhs.toString());
 
-	if (this->getPrecision < rhs.getPrecision())
+	if (rhs_val == 0)
+		throw std::invalid_argument("Division by 0");
+
+	if (this->_val == std::numeric_limits<T>::min() && rhs_val == -1)
+		throw std::overflow_error("Division Overflow");
+
+	if (this->getPrecision() < rhs.getPrecision())
 	{
-		case e_int16 : return new Operand<int16_t>(static_cast<int16_t>(this->_val) / rhs.getVal()), rhs->getType());
-		case e_int32 : return new Operand<int32_t>(static_cast<int32_t>(this->_val) / rhs.getVal()), rhs->getType());
-		case e_float : return new Operand<float>(static_cast<float>(this->_val) / rhs.getVal()), rhs->getType());
-		case e_double: return new Operand<double>(static_cast<double>(this->_val) / rhs.getVal()), rhs->getType());
+		switch (rhs.getPrecision())
+		{
+			case e_int16 : return new Operand<int16_t>(static_cast<int16_t>(this->_val) / rhs_val, rhs.getType());
+			case e_int32 : return new Operand<int32_t>(static_cast<int32_t>(this->_val) / rhs_val, rhs.getType());
+			case e_float : return new Operand<float>(static_cast<float>(this->_val) / rhs_val, rhs.getType());
+			case e_double: return new Operand<double>(static_cast<double>(this->_val) /rhs_val, rhs.getType());
+		}
 	}
 
-	return new Operand<T>(this->_val / (static_cast<T>(rhs.getVal())), this->getType())
+	return new Operand<T>(this->_val / rhs_val, this->getType());
 }
 
 template<class T> const IOperand* Operand<T>::operator % (const IOperand& rhs) const
 {
-	if (rhs.getVal() == 0)
+	int32_t	rhs_val = static_cast<int32_t>(std::stod(rhs.toString()));
+
+	if (rhs_val == 0)
 		throw std::invalid_argument("Mod by 0");
 	if (this->getType() > e_int32 || rhs.getType() > e_int32)
-		throw std::invalid_argument("Invalid Mod Type")
+		throw std::invalid_argument("Invalid Mod Type");
+	if (this->_val == std::numeric_limits<T>::min() && rhs_val == -1)
+		throw std::overflow_error("Division Overflow");
 
-	if (this->getPrecision < rhs.getPrecision())
+	if (this->getPrecision() < rhs.getPrecision())
 	{
-		case e_int16 : return new Operand<int16_t>(static_cast<int16_t>(this->_val) % rhs.getVal()), rhs->getType());
-		case e_int32 : return new Operand<int32_t>(static_cast<int32_t>(this->_val) % rhs.getVal()), rhs->getType());
-		case e_float : return new Operand<float>(static_cast<float>(this->_val) % rhs.getVal()), rhs->getType());
-		case e_double: return new Operand<double>(static_cast<double>(this->_val) % rhs.getVal()), rhs->getType());
+		switch (rhs.getPrecision())
+		{
+			case e_int16 : return new Operand<int16_t>(static_cast<int16_t>(this->_val) % rhs_val, rhs.getType());
+			case e_int32 : return new Operand<int32_t>(static_cast<int32_t>(this->_val) % rhs_val, rhs.getType());
+		}
 	}
 
-	return new Operand<T>(this->_val % (static_cast<T>(rhs.getVal())), this->getType())
+	return new Operand<int8_t>(static_cast<int8_t>(this->_val) % rhs_val, this->getType());
 }
 
-template<class T> bool Operand<T>::operator ==(const IOperand& rhs) const
+template<class T> bool Operand<T>::operator == (const IOperand& rhs) const
 {
-	if (this->_val == rhs.getVal())
+	if (this->_val == std::stod(rhs.toString()))
+		return true;
+	return false;
 }
 
 template<class T> T Operand<T>::getVal(void)				const { return (_val); }
 template<class T> int Operand<T>::getPrecision(void)		const { return (_type); }
 template<class T> eOperandType Operand<T>::getType(void)	const { return (_type); }
 
-template<class T> std::string const& Operand<T>::toString(void)	const { return std::to_string(_val); }
+template<class T> std::string const& Operand<T>::toString(void)	const { return (_str); }
 
 template class Operand<int8_t>;
 template class Operand<int16_t>;

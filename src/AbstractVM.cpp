@@ -1,11 +1,14 @@
 #include "AbstractVM.hpp"
 
-AbstractVM::AbstractVM(void) : _fileName(nullptr) { }
+AbstractVM::AbstractVM(void) : _fileName(nullptr)
+{
+}
 AbstractVM::AbstractVM(std::string s) : _fileName(s) { }
 
 AbstractVM::AbstractVM(const AbstractVM& cpy)
 {
 	//copy
+	(void)cpy;
 }
 
 AbstractVM::~AbstractVM(void) { }
@@ -46,13 +49,14 @@ void	AbstractVM::lexer(void)
 
 	while (_readToLex.isRunning() || !_readToLex.isEmpty())
 	{
+		line = "";
 		_readToLex.pop(line);
 		std::istringstream	ss(line);
 		while (ss >> word)
 		{
 			_lexToParse.push(word);
 		}
-		_lexToParse.push("");
+		_lexToParse.push("\n");
 	}
 	_lexToParse.shutdown();
 }
@@ -69,7 +73,7 @@ void	AbstractVM::parser(void)
 	while (_lexToParse.isRunning() || !_lexToParse.isEmpty())
 	{
 		_lexToParse.pop(word);
-		if (word == "")
+		if (word == "\n")
 			state = e_newline;
 		else if (word.at(0) == ';')
 			state = e_comment;
@@ -85,15 +89,15 @@ void	AbstractVM::parser(void)
 							break;
 			case e_limbo:	syntaxError++;
 							break;
-			case e_newline:	if (token.isValid() && !syntaxError)
-							{
+			case e_newline:	if (token.isEmpty())
+								break;
+							if (token.isValid() && !syntaxError)
 								_parseToFact.push(token);
-							}
 							else
 								std::cout << "Syntax error on line: " << lineCount << std::endl;
 							token.resetToken();
 							state = e_cmd;
-							syntaxError = 0;
+							//syntaxError = 0;
 							lineCount++;
 							break;
 			case e_comment:	std::cout << "Comment: " << word << std::endl;
@@ -113,10 +117,12 @@ void	AbstractVM::factory(void)
 	//wait for priority until all syntax handling is complete??
 	while (_parseToFact.isRunning() || !_parseToFact.isEmpty())
 	{
+		token.resetToken();
 		_parseToFact.pop(token);
+
 		if (token.getCmd() == e_push || token.getCmd() == e_assert)
 		{
-			_oprQueue.push(factory.createOperand(token.getType(), token.getValue()));
+			_oprQueue.push(const_cast<IOperand*>(factory.createOperand(token.getType(), token.getValue())));
 		}
 		_factToExe.push(token.getCmd());
 	}
@@ -130,16 +136,20 @@ void	AbstractVM::execute(void)
 {
 	e_command	order;
 
-	while (_factToExe.isRunning() || !_factToExe.isEmpty())
+	while ((_factToExe.isRunning() || !_factToExe.isEmpty()) &&
+			order != e_exit)
 	{
+		order = e_error;
 		_factToExe.pop(order);
-		_exe_map[order]();
+		(this->*(_exe_map[order]))();
 	}
 	//check to make sure exit was called
+	if (order != e_exit)
+		std::cout << "no exit found at end" << std::endl;
 }
 
-std::ostream&	operator << (std::ostream& output, const Operand& rhs)
+std::ostream&	operator << (std::ostream& output, const IOperand& rhs)
 {
-	output << rhs.getValue();
+	output << rhs.toString();
 	return (output);
 }

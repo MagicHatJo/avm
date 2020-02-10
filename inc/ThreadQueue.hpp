@@ -48,6 +48,7 @@ public:
 
 	bool	isRunning(void)	{ return (_isRunning); }
 	bool	isEmpty(void)	{ return (_queue.empty()); }
+	size_t	size(void)		{ return (_queue.size()); }
 	void	shutdown(void)
 	{
 		_isRunning = false;

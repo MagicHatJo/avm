@@ -1,4 +1,4 @@
-assert int8(5)
-add
+push int32(42)
 dump
-push double(45.45)
+print
+end

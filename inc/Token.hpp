@@ -58,9 +58,10 @@ typedef struct	s_oprMap : public std::map<std::string, eOperandType>
 class Token
 {
 private:
-	e_command	_cmd;
+	e_command		_cmd;
 	eOperandType	_type;
-	std::string	_value;
+	std::string		_value;
+	bool			_empty;
 
 public:
 	/* CANONICAL */
@@ -74,9 +75,10 @@ public:
 	bool	setValue(std::string);
 
 	/* GET */
-	e_command	getCmd(void)	const;
+	e_command		getCmd(void)	const;
 	eOperandType	getType(void)	const;
-	std::string	getValue(void)	const;
+	std::string		getValue(void)	const;
+	bool	isEmpty(void)			const;
 
 	/* UTIL */
 	void	resetToken(void);

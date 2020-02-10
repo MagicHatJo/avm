@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <string>
 #include "eOperandType.hpp"
 
 class IOperand
