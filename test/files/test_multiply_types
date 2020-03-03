@@ -1,0 +1,9 @@
+push int8(10)
+push int16(5)
+mul
+push int32(2000)
+mul
+push double(42.42)
+mul
+dump
+exit

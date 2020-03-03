@@ -193,6 +193,12 @@ class Test_07_Multiply(unittest.TestCase):
 	def test_multiply_overflow_02(self):
 		return self.assertEqual(get_output("test_multiply_overflow_02"), "500\n-2500\n500\n")
 
+	def test_multiply_types(self):
+		return self.assertEqual(get_output("test_multiply_types"), "4242000.000000\n")
+
+	def test_multiply_underflow_01(self):
+		return self.assertEqual(get_output("test_multiply_underflow_01"), "\x1b[91mError:\x1b[0m Multiplication Underflow\n")
+
 	@classmethod
 	def tearDownClass(cls):
 		print("")
