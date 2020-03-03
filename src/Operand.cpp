@@ -9,7 +9,9 @@ template<class T> Operand<T>::Operand(T val, eOperandType type) : _val(val), _ty
 
 template<class T> Operand<T>::Operand(const Operand& cpy)
 {
-	*this = cpy;
+	this->_val = cpy.getVal(); 
+	this->_type = cpy.getType();
+	this->_str = cpy.toString();
 }
 
 template<class T> Operand<T>::~Operand() { }
@@ -29,9 +31,9 @@ template<class T> const IOperand* Operand<T>::operator + (const IOperand& rhs) c
 	
 	T	rhs_val = static_cast<T>(std::stod(rhs.toString()));
 
-	if (this->_val > 0 && rhs_val > 0 && this->_val + rhs_val < rhs_val)
+	if (this->_val > 0 && rhs_val > 0 && static_cast<T>(this->_val + rhs_val) < rhs_val)
 		throw std::overflow_error("Addition Overflow");
-	if (this->_val < 0 && rhs_val < 0 && this->_val + rhs_val > rhs_val)
+	if (this->_val < 0 && rhs_val < 0 && static_cast<T>(this->_val + rhs_val) > rhs_val)
 		throw std::underflow_error("Addition Underflow");
 
 	return new Operand<T>(this->_val + rhs_val, this->getType());
@@ -41,9 +43,9 @@ template<class T> const IOperand* Operand<T>::operator - (const IOperand& rhs) c
 {
 	double	rhs_val = std::stod(rhs.toString());
 
-	if (rhs_val < 0 && this->_val > std::numeric_limits<T>::max() + rhs_val)
+	if (rhs_val < 0 && this->_val > static_cast<T>(std::numeric_limits<T>::max() + rhs_val))
 		throw std::overflow_error("Subtraction Overflow");
-	if (rhs_val >= 0 && this->_val < std::numeric_limits<T>::min() + rhs_val)
+	if (rhs_val >= 0 && this->_val < static_cast<T>(std::numeric_limits<T>::min() - rhs_val))
 		throw std::underflow_error("Subtraction Underflow");
 
 	if (this->getPrecision() < rhs.getPrecision())

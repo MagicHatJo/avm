@@ -1,0 +1,15 @@
+push int8(4)
+push int16(24)
+add
+assert int16(28)
+push int32(12)
+add
+assert int32(40)
+push double(30.5)
+add
+assert double(70.5)
+push float(5.4)
+add
+assert double(75.9)
+dump
+exit

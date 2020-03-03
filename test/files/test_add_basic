@@ -1,0 +1,8 @@
+push int32(42)
+push int32(42)
+add
+dump
+push int32(16)
+add
+dump
+exit

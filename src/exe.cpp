@@ -8,7 +8,6 @@ void	AbstractVM::error_exe(void)
 
 void	AbstractVM::push_exe(void)
 {
-	std::cout << "push" << std::endl;
 	IOperand*	operand;
 
 	_oprQueue.pop(operand);
@@ -17,46 +16,41 @@ void	AbstractVM::push_exe(void)
 
 void	AbstractVM::pop_exe(void)
 {
-	std::cout << "pop" << std::endl;
 	if (_theStack.empty())
-		throw std::runtime_error("Stack is empty");
-	
+		throw EmptyException();
 	_theStack.pop_back();
 }
 
 void	AbstractVM::dump_exe(void)
 {
-	std::cout << "dump" << std::endl;
-	for (size_t i = 0; i < _theStack.size(); i++)
-		std::cout << _theStack[i]->toString() << std::endl;
+	for (size_t i = _theStack.size(); i > 0; i--)
+		std::cout << _theStack[i - 1]->toString() << std::endl;
 }
 
 void	AbstractVM::assert_exe(void)
 {
-	std::cout << "assert" << std::endl;
 	IOperand*	operand;
 	const IOperand*	top;
 
+	if (_theStack.size() == 0)
+		throw EmptyException();
+
 	_oprQueue.pop(operand);
-	top = _theStack.front();
-	
-	if (operand->getType() != top->getType() ||
-		operand->toString() != top->toString())
-	{
-		//throw error
-		std::cout << "assert doesnt match" << std::endl;
-	}
-	else
-	{
-		std::cout << "assert matches" << std::endl;
-	}
+	top = _theStack.back();
+
+	if (operand->getType() != top->getType())
+		throw TypeException();
+	if (operand->toString() != top->toString())
+		throw ValueException();
 }
 
 void	AbstractVM::add_exe(void)
 {
-	std::cout << "add" << std::endl;
 	const IOperand* a;
 	const IOperand* b;
+
+	if (_theStack.size() < 2)
+		throw SizeException();
 
 	a = _theStack.back();
 	_theStack.pop_back();
@@ -68,7 +62,6 @@ void	AbstractVM::add_exe(void)
 
 void	AbstractVM::sub_exe(void)
 {
-	std::cout << "sub" << std::endl;
 	const IOperand* a;
 	const IOperand* b;
 
@@ -82,7 +75,6 @@ void	AbstractVM::sub_exe(void)
 
 void	AbstractVM::mul_exe(void)
 {
-	std::cout << "mul" << std::endl;
 	const IOperand* a;
 	const IOperand* b;
 
@@ -96,7 +88,6 @@ void	AbstractVM::mul_exe(void)
 
 void	AbstractVM::div_exe(void)
 {
-	std::cout << "div" << std::endl;
 	const IOperand* a;
 	const IOperand* b;
 
@@ -110,7 +101,6 @@ void	AbstractVM::div_exe(void)
 
 void	AbstractVM::mod_exe(void)
 {
-	std::cout << "mod" << std::endl;
 	const IOperand* a;
 	const IOperand* b;
 
@@ -124,7 +114,6 @@ void	AbstractVM::mod_exe(void)
 
 void	AbstractVM::print_exe(void)
 {
-	std::cout << "print" << std::endl;
 	const IOperand*	top;
 
 	top = _theStack.front();
@@ -132,16 +121,15 @@ void	AbstractVM::print_exe(void)
 	if (top->getType() != e_int32)
 	{
 		//throw error
-		std::cout << "print doesnt match" << std::endl;
+		std::cout << "print isnt e_int32" << std::endl;
 	}
 	else
 	{
-		std::cout << "print matches" << std::endl;
 		std::cout << static_cast<char>(std::stoi(top->toString())) << std::endl;
 	}
 }
 
 void	AbstractVM::exit_exe(void)
 {
-	std::cout << "exit" << std::endl;
+
 }

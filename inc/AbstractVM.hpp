@@ -91,4 +91,58 @@ public:
 	void	parser(void);
 	void	factory(void);
 	void	execute(void);
+
+	/* Exceptions */
+	class	SyntaxException : public std::exception
+	{
+	private:
+		std::string _msg;
+	public:
+		SyntaxException(void);
+		SyntaxException(int line_num);
+		SyntaxException(const SyntaxException& cpy);
+		~SyntaxException(void) throw();
+		SyntaxException& operator = (const SyntaxException& old);
+		virtual const char* what() const throw();
+	};
+
+	class	EmptyException : public std::exception
+	{
+	public:
+		EmptyException(void);
+		EmptyException(const EmptyException& cpy);
+		~EmptyException(void) throw();
+		EmptyException& operator = (const EmptyException& old);
+		virtual const char* what() const throw();
+	};
+
+	class	TypeException : public std::exception
+	{
+	public:
+		TypeException(void);
+		TypeException(const TypeException& cpy);
+		~TypeException(void) throw();
+		TypeException& operator = (const TypeException& old);
+		virtual const char* what() const throw();
+	};
+
+	class	ValueException : public std::exception
+	{
+	public:
+		ValueException(void);
+		ValueException(const ValueException& cpy);
+		~ValueException(void) throw();
+		ValueException& operator = (const ValueException& old);
+		virtual const char* what() const throw();
+	};
+
+	class	SizeException : public std::exception
+	{
+	public:
+		SizeException(void);
+		SizeException(const SizeException& cpy);
+		~SizeException(void) throw();
+		SizeException& operator = (const SizeException& old);
+		virtual const char* what() const throw();
+	};
 };

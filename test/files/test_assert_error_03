@@ -1,4 +1,3 @@
 push int32(42)
-dump
-print
+assert int8(42)
 exit

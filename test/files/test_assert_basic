@@ -1,0 +1,7 @@
+push int16(32)
+assert int16(32)
+dump
+push double(42.42)
+assert double(42.42)
+dump
+exit

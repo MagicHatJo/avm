@@ -72,38 +72,50 @@ void	AbstractVM::parser(void)
 	token.resetToken();
 	while (_lexToParse.isRunning() || !_lexToParse.isEmpty())
 	{
-		_lexToParse.pop(word);
-		if (word == "\n")
-			state = e_newline;
-		else if (word.at(0) == ';')
-			state = e_comment;
-		switch (state)
+		try
 		{
-			case e_cmd:		if (!(token.setCmd(word)))
-								syntaxError++;
-							state = e_type;
-							break;
-			case e_type:	if (!(token.setValue(word)))
-								syntaxError++;
-							state = e_limbo;
-							break;
-			case e_limbo:	syntaxError++;
-							break;
-			case e_newline:	if (token.isEmpty())
+			_lexToParse.pop(word);
+			if (word == "\n")
+				state = e_newline;
+			else if (word.at(0) == ';')
+				state = e_comment;
+			switch (state)
+			{
+				case e_cmd:		if (!(token.setCmd(word)))
+									syntaxError++;
+								state = e_type;
 								break;
-							if (token.isValid() && !syntaxError)
-								_parseToFact.push(token);
-							else
-								std::cout << "Syntax error on line: " << lineCount << std::endl;
-							token.resetToken();
-							state = e_cmd;
-							//syntaxError = 0;
-							lineCount++;
-							break;
-			case e_comment:	std::cout << "Comment: " << word << std::endl;
-							break;
-			default:		std::cout << "syntax error\n";
+				case e_type:	if (!(token.setValue(word)))
+									syntaxError++;
+								state = e_limbo;
+								break;
+				case e_limbo:	syntaxError++;
+								break;
+				case e_newline:	if (token.isEmpty())
+									break;
+								if (token.isValid() && !syntaxError)
+									_parseToFact.push(token);
+								else
+									syntaxError++;
+								token.resetToken();
+								state = e_cmd;
+								lineCount++;
+								if (syntaxError)
+								{
+									syntaxError = 0;
+									throw SyntaxException(lineCount - 1);
+								}
+								break;
+				case e_comment:	std::cout << "Comment: " << word << std::endl;
+								break;
+				default:		throw SyntaxException();
+			}
 		}
+		catch (std::exception& e)
+		{
+			std::cout << "\033[91mError:\033[0m " << e.what() << std::endl;
+		}
+		
 	}
 	_parseToFact.shutdown();
 }
@@ -136,20 +148,70 @@ void	AbstractVM::execute(void)
 {
 	e_command	order;
 
-	while ((_factToExe.isRunning() || !_factToExe.isEmpty()) &&
-			order != e_exit)
+	while (_factToExe.isRunning() || !_factToExe.isEmpty())
 	{
 		order = e_error;
 		_factToExe.pop(order);
-		(this->*(_exe_map[order]))();
+		try
+		{
+			(this->*(_exe_map[order]))();
+		}
+		catch (std::exception& e)
+		{
+			std::cout << "\033[91mError:\033[0m " << e.what() << std::endl;
+		}
 	}
 	//check to make sure exit was called
 	if (order != e_exit)
 		std::cout << "no exit found at end" << std::endl;
 }
 
+/******************** Overloads ********************/
 std::ostream&	operator << (std::ostream& output, const IOperand& rhs)
 {
 	output << rhs.toString();
 	return (output);
 }
+
+
+/******************** Exceptions ********************/
+AbstractVM::SyntaxException::SyntaxException(void)
+{
+	std::ostringstream o;
+	o << "Invalid syntax";
+	_msg = o.str();
+}
+AbstractVM::SyntaxException::SyntaxException(int ln)
+{
+	std::ostringstream o;
+	o << "Invalid syntax on line " << ln;
+	_msg = o.str();
+}
+AbstractVM::SyntaxException::SyntaxException(const SyntaxException& cpy) { *this = cpy; }
+AbstractVM::SyntaxException::~SyntaxException(void) throw() { }
+AbstractVM::SyntaxException& AbstractVM::SyntaxException::operator = (const SyntaxException&) { return (*this); }
+const char* AbstractVM::SyntaxException::what() const throw() { return (_msg.c_str()); }
+
+AbstractVM::EmptyException::EmptyException(void) { }
+AbstractVM::EmptyException::EmptyException(const EmptyException& cpy) { *this = cpy; }
+AbstractVM::EmptyException::~EmptyException(void) throw() { }
+AbstractVM::EmptyException& AbstractVM::EmptyException::operator = (const EmptyException&) { return (*this); }
+const char* AbstractVM::EmptyException::what() const throw() { return ("Stack is empty"); }
+
+AbstractVM::TypeException::TypeException(void) { }
+AbstractVM::TypeException::TypeException(const TypeException& cpy) { *this = cpy; }
+AbstractVM::TypeException::~TypeException(void) throw() { }
+AbstractVM::TypeException& AbstractVM::TypeException::operator = (const TypeException&) { return (*this); }
+const char* AbstractVM::TypeException::what() const throw() { return ("Operand type does not match"); }
+
+AbstractVM::ValueException::ValueException(void) { }
+AbstractVM::ValueException::ValueException(const ValueException& cpy) { *this = cpy; }
+AbstractVM::ValueException::~ValueException(void) throw() { }
+AbstractVM::ValueException& AbstractVM::ValueException::operator = (const ValueException&) { return (*this); }
+const char* AbstractVM::ValueException::what() const throw() { return ("Operand value does not match"); }
+
+AbstractVM::SizeException::SizeException(void) { }
+AbstractVM::SizeException::SizeException(const SizeException& cpy) { *this = cpy; }
+AbstractVM::SizeException::~SizeException(void) throw() { }
+AbstractVM::SizeException& AbstractVM::SizeException::operator = (const SizeException&) { return (*this); }
+const char* AbstractVM::SizeException::what() const throw() { return ("Stack does not have sufficient operands"); }

@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <regex>
+#include <limits>
 
 #include "eOperandType.hpp"
 

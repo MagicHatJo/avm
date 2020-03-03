@@ -68,5 +68,28 @@ bool	Token::isValid(void)
 	}
 	else if (this->_type != e_null || this->_value != "")
 		return (false);
+	
+	switch (this->_type)
+	{
+		case e_int8  :	if ((this->_value.find(".") != std::string::npos) ||
+							std::stoi(this->_value) > std::numeric_limits<int8_t>::max() ||
+							std::stoi(this->_value) < std::numeric_limits<int8_t>::min())
+							return (false);
+							break ;
+		case e_int16 :	if ((this->_value.find(".") != std::string::npos) ||
+							std::stoi(this->_value) > std::numeric_limits<int16_t>::max() ||
+							std::stoi(this->_value) < std::numeric_limits<int16_t>::min())
+							return (false);
+							break ;
+		case e_int32 :	if ((this->_value.find(".") != std::string::npos) ||
+							std::stoi(this->_value) > std::numeric_limits<int32_t>::max() ||
+							std::stoi(this->_value) < std::numeric_limits<int32_t>::min())
+							return (false);
+							break ;
+		case e_float : return (true);
+		case e_double: return (true);
+		default: break;
+	}
+
 	return (true);
 }

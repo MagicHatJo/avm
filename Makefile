@@ -20,7 +20,7 @@ OBJ = $(addsuffix .o, $(addprefix $(OBJ_DIR)/, $(SRC)))
 DEP = $(OBJ:%.o=%.d)
 
 CC = g++
-CFLAGS = -Wall -Wextra -Werror $(INC)
+CFLAGS = -std=c++11 -Wall -Wextra -Werror $(INC)
 MAKEOPTS = -j4
 
 all: $(OBJ_DIR) $(NAME)

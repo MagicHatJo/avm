@@ -1,0 +1,5 @@
+push double(5.5)
+push double(34.2)
+sub
+dump
+exit

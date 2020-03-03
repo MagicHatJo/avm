@@ -1,4 +1,6 @@
+push int8(5)
+dump
 push int32(42)
 dump
-print
+dump
 exit
