@@ -1,0 +1,8 @@
+push int8(-128)
+push int16(5)
+sub
+dump
+push int32(9999999)
+sub
+dump
+exit

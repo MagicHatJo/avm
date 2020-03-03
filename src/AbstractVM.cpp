@@ -163,7 +163,7 @@ void	AbstractVM::execute(void)
 	}
 	//check to make sure exit was called
 	if (order != e_exit)
-		std::cout << "no exit found at end" << std::endl;
+		std::cout << "no exit found at end (execute)" << std::endl;
 }
 
 /******************** Overloads ********************/

@@ -1,0 +1,4 @@
+push double(42.42)
+pop
+sub
+exit

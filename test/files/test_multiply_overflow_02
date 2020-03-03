@@ -1,0 +1,9 @@
+push int8(5)
+push int16(100)
+mul
+dump
+push int16(500)
+push int8(-5)
+mul
+dump
+exit

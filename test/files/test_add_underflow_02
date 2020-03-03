@@ -2,4 +2,7 @@ push int8(-128)
 push int16(-5)
 add
 dump
+push int32(-9999999)
+add
+dump
 exit

@@ -1,10 +1,13 @@
 #!/usr/bin/python3
+#!/
 
 import os
 import unittest
 from contextlib import contextmanager
 
 from ShellOutput import ShellOutput
+
+EXECUTABLE = "../bin/avm"
 
 def print_header(str):
 	print("----------------------------------------------------------------------")
@@ -13,7 +16,7 @@ def print_header(str):
 
 def get_output(file):
 	with ShellOutput() as out:
-		os.system("./avm files/" + file)
+		os.system(EXECUTABLE + " files/" + file)
 	return out.capturedtext
 
 class Test_01_Push(unittest.TestCase):
@@ -129,7 +132,7 @@ class Test_05_Add(unittest.TestCase):
 		return self.assertEqual(get_output("test_add_underflow_01"), "\x1b[91mError:\x1b[0m Addition Underflow\n")
 
 	def test_add_underflow_02(self):
-		return self.assertEqual(get_output("test_add_underflow_02"), "-133\n-133\n-133\n")
+		return self.assertEqual(get_output("test_add_underflow_02"), "-133\n-10000132\n")
 
 	@classmethod
 	def tearDownClass(cls):
@@ -142,8 +145,54 @@ class Test_06_Subtract(unittest.TestCase):
 		print_header("Subtract")
 
 	def test_subtract_basic(self):
-		return self.assertEqual(get_output("test_subtract_basic"), "")
+		return self.assertEqual(get_output("test_subtract_basic"), "-28.700000\n")
 	
+	def test_subtract_empty(self):
+		return self.assertEqual(get_output("test_subtract_empty"), "\x1b[91mError:\x1b[0m Stack does not have sufficient operands\n")
+	
+	def test_subtract_error_01(self):
+		return self.assertEqual(get_output("test_subtract_error_01"), "\x1b[91mError:\x1b[0m Stack does not have sufficient operands\n")
+
+	def test_subtract_overflow_01(self):
+		return self.assertEqual(get_output("test_subtract_overflow_01"), "\x1b[91mError:\x1b[0m Subtraction Overflow\n")
+
+	def test_subtract_overflow_02(self):
+		return self.assertEqual(get_output("test_subtract_overflow_02"), "32772\n32772\n32772\n")
+	
+	def test_subtract_types(self):
+		return self.assertEqual(get_output("test_subtract_types"), "-22.500000\n-27.900000\n")
+
+	def test_subtract_underflow_01(self):
+		return self.assertEqual(get_output("test_subtract_underflow_01"), "\x1b[91mError:\x1b[0m Subtraction Underflow\n")
+
+	def test_subtract_underflow_02(self):
+		return self.assertEqual(get_output("test_subtract_underflow_02"), "-133\n-10000132\n")
+
+	@classmethod
+	def tearDownClass(cls):
+		print("")
+
+class Test_07_Multiply(unittest.TestCase):
+
+	@classmethod
+	def setUpClass(cls):
+		print_header("Multiply")
+
+	def test_multiply_basic(self):
+		return self.assertEqual(get_output("test_multiply_basic"), "1764\n")
+
+	def test_multiply_empty(self):
+		return self.assertEqual(get_output("test_multiply_empty"), "\x1b[91mError:\x1b[0m Stack does not have sufficient operands\n")
+
+	def test_multiply_error_01(self):
+		return self.assertEqual(get_output("test_multiply_error_01"), "\x1b[91mError:\x1b[0m Stack does not have sufficient operands\n")
+
+	def test_multiply_overflow_01(self):
+		return self.assertEqual(get_output("test_multiply_overflow_01"), "\x1b[91mError:\x1b[0m Multiplication Overflow\n")
+	
+	def test_multiply_overflow_02(self):
+		return self.assertEqual(get_output("test_multiply_overflow_02"), "500\n-2500\n500\n")
+
 	@classmethod
 	def tearDownClass(cls):
 		print("")

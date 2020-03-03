@@ -12,7 +12,7 @@ OperandFactory::~OperandFactory(void) { }
 
 OperandFactory& OperandFactory::operator = (const OperandFactory & val)
 {
-	*this = val;
+	(void)val;
 	return (*this);
 }
 

@@ -1,0 +1,9 @@
+push int16(32767)
+push int32(-5)
+sub
+dump
+push int32(32767)
+push int16(-5)
+sub
+dump
+exit

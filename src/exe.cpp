@@ -3,7 +3,7 @@
 
 void	AbstractVM::error_exe(void)
 {
-	std::cout << "error" << std::endl;
+	std::cout << "error_exe" << std::endl;
 }
 
 void	AbstractVM::push_exe(void)
@@ -65,6 +65,9 @@ void	AbstractVM::sub_exe(void)
 	const IOperand* a;
 	const IOperand* b;
 
+	if (_theStack.size() < 2)
+		throw SizeException();
+
 	a = _theStack.back();
 	_theStack.pop_back();
 	b = _theStack.back();
@@ -77,6 +80,9 @@ void	AbstractVM::mul_exe(void)
 {
 	const IOperand* a;
 	const IOperand* b;
+
+	if (_theStack.size() < 2)
+		throw SizeException();
 
 	a = _theStack.back();
 	_theStack.pop_back();
@@ -91,6 +97,9 @@ void	AbstractVM::div_exe(void)
 	const IOperand* a;
 	const IOperand* b;
 
+	if (_theStack.size() < 2)
+		throw SizeException();
+
 	a = _theStack.back();
 	_theStack.pop_back();
 	b = _theStack.back();
@@ -103,6 +112,9 @@ void	AbstractVM::mod_exe(void)
 {
 	const IOperand* a;
 	const IOperand* b;
+
+	if (_theStack.size() < 2)
+		throw SizeException();
 
 	a = _theStack.back();
 	_theStack.pop_back();

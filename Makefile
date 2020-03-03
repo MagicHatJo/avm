@@ -23,11 +23,15 @@ CC = g++
 CFLAGS = -std=c++11 -Wall -Wextra -Werror $(INC)
 MAKEOPTS = -j4
 
-all: $(OBJ_DIR) $(NAME)
+all: $(OBJ_DIR) $(BIN_DIR) $(NAME)
 
 $(OBJ_DIR):
 	@printf "\033[32mCreating : Object Directory\033[0m\n"
 	@mkdir -p $(OBJ_DIR)
+
+$(BIN_DIR):
+	@printf "\033[32mCreating : Output Directory\033[0m\n"
+	@mkdir -p $(BIN_DIR)
 
 -include $(DEP)
 
@@ -52,6 +56,6 @@ fclean: clean
 re: fclean all
 
 test: all
-	@./$(BIN_DIR)/$(NAME) test_file.txt
+
 
 .PHONY: all clean fclean re test
