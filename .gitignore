@@ -1,6 +1,9 @@
 .vscode
 *.o
 *.d
-obj/
+obj
+bin
+obj/*
+bin/*
 avm
 __pycache__
