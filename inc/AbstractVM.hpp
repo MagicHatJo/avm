@@ -8,19 +8,13 @@
 #include <queue>
 #include <fstream>
 #include <sstream>
-
 #include <string>
-
 #include <vector>
 
 #include "ThreadQueue.hpp"
 #include "Token.hpp"
-
 #include "IOperand.hpp"
 #include "OperandFactory.hpp"
-
-//temp inc
-#include <iostream>
 
 enum	e_state
 {
@@ -37,6 +31,7 @@ class AbstractVM
 {
 private:
 	std::string				_fileName;
+	bool					_exitCalled;
 
 	ThreadQueue<std::string>	_readToLex;
 	ThreadQueue<std::string>	_lexToParse;

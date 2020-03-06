@@ -1,0 +1,8 @@
+push double(42.4242)
+push double(17.33)
+div
+dump
+push double(17.33)
+mul
+dump
+exit

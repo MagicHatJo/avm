@@ -1,0 +1,8 @@
+push float(42.4242)
+push float(17.33)
+div
+dump
+push float(17.33)
+mul
+dump
+exit

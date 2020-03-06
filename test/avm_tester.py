@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-#!/
 
 import os
 import unittest
@@ -95,10 +94,10 @@ class Test_04_Assert(unittest.TestCase):
 		return self.assertEqual(get_output("test_assert_error_02"), "\x1b[91mError:\x1b[0m Invalid syntax on line 2\n")
 
 	def test_assert_error_03(self):
-		return self.assertEqual(get_output("test_assert_error_03"), "\x1b[91mError:\x1b[0m Operand type does not match\n")
+		return self.assertEqual(get_output("test_assert_error_03"), "\x1b[91mError:\x1b[0m Invalid operand type\n")
 
 	def test_assert_error_04(self):
-		return self.assertEqual(get_output("test_assert_error_04"), "\x1b[91mError:\x1b[0m Operand value does not match\n")
+		return self.assertEqual(get_output("test_assert_error_04"), "\x1b[91mError:\x1b[0m Invalid operand value\n")
 
 	@classmethod
 	def tearDownClass(cls):
@@ -202,6 +201,157 @@ class Test_07_Multiply(unittest.TestCase):
 	@classmethod
 	def tearDownClass(cls):
 		print("")
+
+class Test_08_Divide(unittest.TestCase):
+
+	@classmethod
+	def setUpClass(cls):
+		print_header("Divide")
+	
+	def test_divide_basic(self):
+		return self.assertEqual(get_output("test_divide_basic"), "42\n")
+	
+	def test_divide_double(self):
+		return self.assertEqual(get_output("test_divide_double"), "2.448021\n42.424200\n")
+
+	def test_divide_empty(self):
+		return self.assertEqual(get_output("test_divide_empty"), "\x1b[91mError:\x1b[0m Stack does not have sufficient operands\n")
+
+	def test_divide_float(self):
+		return self.assertEqual(get_output("test_divide_float"), "2.448021\n42.424198\n")
+
+	def test_divide_overflow_01(self):
+		return self.assertEqual(get_output("test_divide_overflow_01"), "\x1b[91mError:\x1b[0m Division Overflow\n")
+
+	def test_divide_overflow_02(self):
+		return self.assertEqual(get_output("test_divide_overflow_02"), "128\n128\n")
+
+	def test_divide_zero(self):
+		return self.assertEqual(get_output("test_divide_zero"), "\x1b[91mError:\x1b[0m Division by 0\n")
+
+	@classmethod
+	def tearDownClass(cls):
+		print("")
+
+class Test_09_Modulus(unittest.TestCase):
+
+	@classmethod
+	def setUpClass(cls):
+		print_header("Modulus")
+
+	def test_modulus_basic(self):
+		return self.assertEqual(get_output("test_modulus_basic"), "1\n")
+	
+	def test_modulus_empty(self):
+		return self.assertEqual(get_output("test_modulus_empty"), "\x1b[91mError:\x1b[0m Stack does not have sufficient operands\n")
+
+	def test_modulus_overflow_01(self):
+		return self.assertEqual(get_output("test_modulus_overflow_01"), "\x1b[91mError:\x1b[0m Modulus Overflow\n")
+
+	def test_modulus_zero(self):
+		return self.assertEqual(get_output("test_modulus_zero"), "\x1b[91mError:\x1b[0m Modulus by 0\n")
+
+	@classmethod
+	def tearDownClass(cls):
+		print("")
+
+class Test_10_Print(unittest.TestCase):
+
+	@classmethod
+	def setUpClass(cls):
+		print_header("Print")
+	
+	def test_print_basic(self):
+		return self.assertEqual(get_output("test_print_basic"), "M\na\ng\ni\nc\n")
+
+	def test_print_empty(self):
+		return self.assertEqual(get_output("test_print_empty"), "\x1b[91mError:\x1b[0m Stack does not have sufficient operands\n")
+
+	def test_print_error_01(self):
+		return self.assertEqual(get_output("test_print_error_01"), "\x1b[91mError:\x1b[0m Invalid operand value\n")
+
+	def test_print_error_02(self):
+		return self.assertEqual(get_output("test_print_error_02"), "\x1b[91mError:\x1b[0m Invalid operand type\n")
+
+	@classmethod
+	def tearDownClass(cls):
+		print("")
+
+class Test_11_Exit(unittest.TestCase):
+
+	@classmethod
+	def setUpclass(cls):
+		print_header("Exit")
+	
+	def test_exit_basic(self):
+		return self.assertEqual(get_output("test_exit_basic"), "")
+	
+	def test_exit_error_01(self):
+		return self.assertEqual(get_output("test_exit_error_01"), "\x1b[91mError:\x1b[0m Invalid program termination\n")
+	@classmethod
+	def tearDownClass(cls):
+		print("")
+
+class Test_12_Comments(unittest.TestCase):
+
+	@classmethod
+	def setUpClass(cls):
+		print_header("Comments")
+	
+	def test_comments_basic(self):
+		return self.assertEqual(get_output("test_comments_basic"), "")
+
+	def test_comments_footer(self):
+		return self.assertEqual(get_output("test_comments_footer"), "*\n")
+
+	def test_comments_header(self):
+		return self.assertEqual(get_output("test_comments_header"), "*\n")
+
+	def test_comments_spacing(self):
+		return self.assertEqual(get_output("test_comments_spacing"), "*\n")
+
+	@classmethod
+	def tearDownClass(cls):
+		print("")
+
+class Test_13_Mix(unittest.TestCase):
+	
+	@classmethod
+	def setUpClass(cls):
+		print_header("Mix")
+
+	def test_mix_01(self):
+		return self.assertEqual(get_output("test_mix_01"), "")
+
+	def test_mix_02(self):
+		return self.assertEqual(get_output("test_mix_02"), "9.456789\n9\n8\n")
+
+	def test_mix_03(self):
+		return self.assertEqual(get_output("test_mix_03"), "42\n42.420000\n3341.250000\n")
+
+	def test_mix_04(self):
+		return self.assertEqual(get_output("test_mix_04"), "0\n32\n\x1b[91mError:\x1b[0m Division by 0\n")
+
+	def test_mix_05(self):
+		return self.assertEqual(get_output("test_mix_05"), "\x1b[91mError:\x1b[0m Invalid syntax on line 1\n")
+
+	def test_mix_06(self):
+		return self.assertEqual(get_output("test_mix_06"), "\x1b[91mError:\x1b[0m Invalid syntax on line 1\n\x1b[91mError:\x1b[0m Invalid syntax on line 2\n")
+
+	def test_mix_07(self):
+		return self.assertEqual(get_output("test_mix_07"), "\x1b[91mError:\x1b[0m Stack is empty\n")
+
+	def test_mix_08(self):
+		return self.assertEqual(get_output("test_mix_08"), "\x1b[91mError:\x1b[0m Invalid syntax on line 1\n\x1b[91mError:\x1b[0m Invalid syntax on line 2\n")
+
+	def test_mix_09(self):
+		return self.assertEqual(get_output("test_mix_09"), "p\nl\no\np\n!\n")
+
+	@classmethod
+	def tearDownClass(cls):
+		print("")
+
+#class Test_14_Stdin(unittest.TestCase):
 
 if __name__ == '__main__':
 	print("----------------------------------------------------------------------\n")

@@ -30,7 +30,7 @@ bool	Token::setCmd(std::string word)
 }
 bool	Token::setValue(std::string word)
 {
-	static const std::regex	re{"^(int8\\(|int16\\(|int32\\(|float\\(|double\\()+((-?\\d+\\.\\d+)|(-?\\d+))+\\)$"};
+	static const std::regex	re{"^(int8\\(|int16\\(|int32\\(|float\\(|double\\()+((\\+|-?\\d+\\.\\d+)|(-?\\d+))+\\)$"};
 	std::smatch	match;
 	t_oprMap	map;
 
@@ -71,25 +71,32 @@ bool	Token::isValid(void)
 	
 	switch (this->_type)
 	{
-		case e_int8  :	if ((this->_value.find(".") != std::string::npos) ||
+		case e_int8  :	if (this->_value.length() > 4)
+							return (false);
+						if ((this->_value.find(".") != std::string::npos) ||
 							std::stoi(this->_value) > std::numeric_limits<int8_t>::max() ||
 							std::stoi(this->_value) < std::numeric_limits<int8_t>::min())
 							return (false);
-							break ;
-		case e_int16 :	if ((this->_value.find(".") != std::string::npos) ||
+		case e_int16 :	if (this->_value.length() > 6)
+							return (false);
+						if ((this->_value.find(".") != std::string::npos) ||
 							std::stoi(this->_value) > std::numeric_limits<int16_t>::max() ||
 							std::stoi(this->_value) < std::numeric_limits<int16_t>::min())
 							return (false);
-							break ;
-		case e_int32 :	if ((this->_value.find(".") != std::string::npos) ||
+		case e_int32 :	if (this->_value.length() > 11)
+							return (false);
+						if ((this->_value.find(".") != std::string::npos) ||
 							std::stoi(this->_value) > std::numeric_limits<int32_t>::max() ||
 							std::stoi(this->_value) < std::numeric_limits<int32_t>::min())
 							return (false);
-							break ;
-		case e_float : return (true);
-		case e_double: return (true);
 		default: break;
 	}
-
 	return (true);
 }
+
+/******************** Exceptions ********************/
+Token::RangeException::RangeException(void) { }
+Token::RangeException::RangeException(const RangeException& cpy) { *this = cpy; }
+Token::RangeException::~RangeException(void) throw() { }
+Token::RangeException& Token::RangeException::operator = (const RangeException&) { return (*this); }
+const char* Token::RangeException::what() const throw() { return ("Value out of type range"); }

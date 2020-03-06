@@ -1,15 +1,9 @@
 
 #include "OperandFactory.hpp"
 
-OperandFactory::OperandFactory(void)
-{
-}
-OperandFactory::OperandFactory(const OperandFactory & val)
-{
-	(void)val;
-}
+OperandFactory::OperandFactory(void) { }
+OperandFactory::OperandFactory(const OperandFactory & val) { (void)val; }
 OperandFactory::~OperandFactory(void) { }
-
 OperandFactory& OperandFactory::operator = (const OperandFactory & val)
 {
 	(void)val;
@@ -43,6 +37,5 @@ IOperand const * OperandFactory::createDouble(std::string const& val) const
 
 IOperand const * OperandFactory::createOperand(eOperandType type, std::string const& str) const
 {
-	//try catch this
 	return ((this->*(_map[type]))(str));
 }

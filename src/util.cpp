@@ -10,4 +10,3 @@ int countMatchInRegex(std::string s, std::string re)
 
     return std::distance(words_begin, words_end);
 }
-

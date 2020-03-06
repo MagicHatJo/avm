@@ -20,7 +20,8 @@ enum	e_command
 	e_div,
 	e_mod,
 	e_print,
-	e_exit
+	e_exit,
+	e_stdend
 };
 
 //UTIL
@@ -41,6 +42,7 @@ typedef struct	s_cmdMap : public std::map<std::string, e_command>
 		this->operator[]("mod")    = e_mod;
 		this->operator[]("print")  = e_print;
 		this->operator[]("exit")   = e_exit;
+		this->operator[](";;")     = e_stdend;
 	};
 }				t_cmdMap;
 
@@ -84,4 +86,15 @@ public:
 	/* UTIL */
 	void	resetToken(void);
 	bool	isValid(void);
+
+	/* Exceptions */
+	class	RangeException : public std::exception
+	{
+	public:
+		RangeException(void);
+		RangeException(const RangeException& cpy);
+		~RangeException(void) throw();
+		RangeException& operator = (const RangeException& old);
+		virtual const char* what() const throw();
+	};
 };

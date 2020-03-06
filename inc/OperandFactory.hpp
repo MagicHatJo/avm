@@ -4,7 +4,6 @@
 #include <string>
 
 #include "eOperandType.hpp"
-
 #include "IOperand.hpp"
 #include "Operand.hpp"
 

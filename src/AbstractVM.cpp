@@ -1,16 +1,8 @@
 #include "AbstractVM.hpp"
 
-AbstractVM::AbstractVM(void) : _fileName(nullptr)
-{
-}
-AbstractVM::AbstractVM(std::string s) : _fileName(s) { }
-
-AbstractVM::AbstractVM(const AbstractVM& cpy)
-{
-	//copy
-	(void)cpy;
-}
-
+AbstractVM::AbstractVM(void) : _fileName(nullptr), _exitCalled(false) { }
+AbstractVM::AbstractVM(std::string s) : _fileName(s), _exitCalled(false) { }
+AbstractVM::AbstractVM(const AbstractVM& cpy) { (void)cpy; }
 AbstractVM::~AbstractVM(void) { }
 
 AbstractVM& AbstractVM::operator = (const AbstractVM& old)
@@ -22,10 +14,12 @@ AbstractVM& AbstractVM::operator = (const AbstractVM& old)
 void	AbstractVM::reader(void)
 {
 	std::string		line;
+
 	if (_fileName.empty())
 	{
 		while (std::getline(std::cin, line) && line != ";;")
 			_readToLex.push(line);
+		_readToLex.push(";;");
 	}
 	else
 	{
@@ -33,7 +27,7 @@ void	AbstractVM::reader(void)
 		ifs.open(_fileName);
 		if (ifs.fail())
 		{
-			std::cout << "error, could not open file" << std::endl;
+			std::cout << "\x1b[91mError:\x1b[0m Invalid file" << std::endl;
 			exit(0);
 		}
 		while (std::getline(ifs, line))
@@ -54,6 +48,15 @@ void	AbstractVM::lexer(void)
 		std::istringstream	ss(line);
 		while (ss >> word)
 		{
+			std::string delimiter = ";";
+			size_t pos = 0;
+			std::string token;
+			if (word.at(0) != ';' && (pos = word.find(delimiter)) != std::string::npos)
+			{
+				token = word.substr(0, pos);
+				_lexToParse.push(token);
+				word.erase(0, pos);
+			}
 			_lexToParse.push(word);
 		}
 		_lexToParse.push("\n");
@@ -77,6 +80,11 @@ void	AbstractVM::parser(void)
 			_lexToParse.pop(word);
 			if (word == "\n")
 				state = e_newline;
+			else if (word == ";;")
+			{
+				token.setCmd(word);
+				_parseToFact.push(token);
+			}
 			else if (word.at(0) == ';')
 				state = e_comment;
 			switch (state)
@@ -92,7 +100,11 @@ void	AbstractVM::parser(void)
 				case e_limbo:	syntaxError++;
 								break;
 				case e_newline:	if (token.isEmpty())
+								{
+									state = e_cmd;
+									lineCount++;
 									break;
+								}
 								if (token.isValid() && !syntaxError)
 									_parseToFact.push(token);
 								else
@@ -106,8 +118,7 @@ void	AbstractVM::parser(void)
 									throw SyntaxException(lineCount - 1);
 								}
 								break;
-				case e_comment:	std::cout << "Comment: " << word << std::endl;
-								break;
+				case e_comment: break;
 				default:		throw SyntaxException();
 			}
 		}
@@ -120,13 +131,11 @@ void	AbstractVM::parser(void)
 	_parseToFact.shutdown();
 }
 
-//factory
 void	AbstractVM::factory(void)
 {
 	OperandFactory		factory;
 	Token				token;
 
-	//wait for priority until all syntax handling is complete??
 	while (_parseToFact.isRunning() || !_parseToFact.isEmpty())
 	{
 		token.resetToken();
@@ -141,17 +150,18 @@ void	AbstractVM::factory(void)
 	_factToExe.shutdown();
 }
 
-//have queue of operands as well instead to avoid needing priority passing
-//stack takes instructions and operates on the existing stack
-//stops printing on first execution error
 void	AbstractVM::execute(void)
 {
-	e_command	order;
+	e_command	order = e_error;
+	e_command	prev;
 
 	while (_factToExe.isRunning() || !_factToExe.isEmpty())
 	{
+		prev = order;
 		order = e_error;
 		_factToExe.pop(order);
+		if (_exitCalled || (_fileName.empty() && order == e_stdend))
+			break;
 		try
 		{
 			(this->*(_exe_map[order]))();
@@ -161,9 +171,9 @@ void	AbstractVM::execute(void)
 			std::cout << "\033[91mError:\033[0m " << e.what() << std::endl;
 		}
 	}
-	//check to make sure exit was called
-	if (order != e_exit)
-		std::cout << "no exit found at end (execute)" << std::endl;
+	if ((!_fileName.empty() && order != e_exit) || 
+		(_fileName.empty() && order == e_stdend && prev != e_exit))
+		std::cout << "\033[91mError:\033[0m Invalid program termination" << std::endl;
 }
 
 /******************** Overloads ********************/
@@ -172,7 +182,6 @@ std::ostream&	operator << (std::ostream& output, const IOperand& rhs)
 	output << rhs.toString();
 	return (output);
 }
-
 
 /******************** Exceptions ********************/
 AbstractVM::SyntaxException::SyntaxException(void)
@@ -202,13 +211,13 @@ AbstractVM::TypeException::TypeException(void) { }
 AbstractVM::TypeException::TypeException(const TypeException& cpy) { *this = cpy; }
 AbstractVM::TypeException::~TypeException(void) throw() { }
 AbstractVM::TypeException& AbstractVM::TypeException::operator = (const TypeException&) { return (*this); }
-const char* AbstractVM::TypeException::what() const throw() { return ("Operand type does not match"); }
+const char* AbstractVM::TypeException::what() const throw() { return ("Invalid operand type"); }
 
 AbstractVM::ValueException::ValueException(void) { }
 AbstractVM::ValueException::ValueException(const ValueException& cpy) { *this = cpy; }
 AbstractVM::ValueException::~ValueException(void) throw() { }
 AbstractVM::ValueException& AbstractVM::ValueException::operator = (const ValueException&) { return (*this); }
-const char* AbstractVM::ValueException::what() const throw() { return ("Operand value does not match"); }
+const char* AbstractVM::ValueException::what() const throw() { return ("Invalid operand value"); }
 
 AbstractVM::SizeException::SizeException(void) { }
 AbstractVM::SizeException::SizeException(const SizeException& cpy) { *this = cpy; }

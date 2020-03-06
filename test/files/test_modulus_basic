@@ -1,0 +1,7 @@
+push int32(86420)
+push int32(23)
+mod
+push int8(-4)
+mod
+dump
+exit

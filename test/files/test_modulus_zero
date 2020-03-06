@@ -1,0 +1,4 @@
+push double(92.23)
+push double(0)
+mod
+exit

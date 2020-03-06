@@ -3,7 +3,7 @@
 
 void	AbstractVM::error_exe(void)
 {
-	std::cout << "error_exe" << std::endl;
+	throw SyntaxException();
 }
 
 void	AbstractVM::push_exe(void)
@@ -128,20 +128,21 @@ void	AbstractVM::print_exe(void)
 {
 	const IOperand*	top;
 
-	top = _theStack.front();
+	if (_theStack.size() < 1)
+		throw SizeException();
+
+	top = _theStack.back();
 	
-	if (top->getType() != e_int32)
-	{
-		//throw error
-		std::cout << "print isnt e_int32" << std::endl;
-	}
-	else
-	{
-		std::cout << static_cast<char>(std::stoi(top->toString())) << std::endl;
-	}
+	if (top->getType() != e_int8)
+		throw TypeException();
+	
+	if (std::stoi(top->toString()) < 0 || std::stoi(top->toString()) > 127)
+		throw ValueException();
+
+	std::cout << static_cast<char>(std::stoi(top->toString())) << std::endl;
 }
 
 void	AbstractVM::exit_exe(void)
 {
-
+	_exitCalled = true;
 }

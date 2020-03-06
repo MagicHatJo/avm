@@ -11,11 +11,9 @@ int	main(int ac, char **av)
 		exit(0);
 	}
 	AbstractVM avm(ac == 2 ? av[1] : "");
-	//try catch inside each thread function
 	std::thread thread_1(&AbstractVM::reader, &avm);
 	std::thread thread_2(&AbstractVM::lexer, &avm);
 	std::thread	thread_3(&AbstractVM::parser, &avm);
-	//if error, stop sending things past parser
 	std::thread	thread_4(&AbstractVM::factory, &avm);
 	std::thread	thread_5(&AbstractVM::execute, &avm);
 

@@ -1,0 +1,8 @@
+push int8(-128)
+push int16(-1)
+div
+push int32(-128)
+push int8(-1)
+div
+dump
+exit

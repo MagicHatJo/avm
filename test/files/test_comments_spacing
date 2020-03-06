@@ -1,0 +1,11 @@
+push int32(42)
+assert int32(42) ;comment one
+push int32(42) ; comment two
+add
+assert int32(84);comment three
+pop
+push int8(16)	;	comment4
+push int8(26)
+add
+print
+exit

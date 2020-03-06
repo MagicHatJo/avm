@@ -3,3 +3,4 @@
 *.d
 obj/
 avm
+__pycache__

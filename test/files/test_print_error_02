@@ -1,0 +1,4 @@
+push int8(48)
+push double(42.42)
+print
+exit
